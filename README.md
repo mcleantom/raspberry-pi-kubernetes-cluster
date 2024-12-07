@@ -98,3 +98,29 @@ To install k3s on the raspberry pi's, run:
 ```
 ansible-playbook playbooks/site.yaml -i inventory.yaml --ask-become-pass
 ```
+
+## Controlling kubernetes from your pc
+
+First install kubectl:
+```
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+```
+
+Then make a copy of your server k3s config on the server machine:
+```
+sudo cp /etc/rancher/k3s/k3s.yaml /home/tom.mclean/k3s.
+yaml
+sudo chown tom.mclean:tom.mclean k3s.yaml
+```
+Then copy it to your machine:
+```
+scp tom.mclean@10.42.42.100:/home/tom.mclean/k3s.yaml ~/k3s-config.yaml
+export KUBECONFIG=~/k3s-config.yaml
+mclean@tommclean:~$ kubectl get nodes
+NAME     STATUS   ROLES                  AGE   VERSION
+node-0   Ready    control-plane,master   14h   v1.31.3+k3s1
+node-1   Ready    <none>                 14h   v1.31.3+k3s1
+node-2   Ready    <none>                 14h   v1.31.3+k3s1
+```
+
