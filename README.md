@@ -27,7 +27,8 @@ Connect your dev pc to the mini router's wifi network, then:
 2. WISP mode
 3. Dynamic IP
 4. Connect to your home wifi
-5. Then go to Network -> LAN and set the ip address to 10.42.42.1 and subnet mask to 255.255.255.0
+5. Then go to Network -> LAN and set the ip address to 10.44.44.1 and subnet mask to 255.255.255.0. Whatever you do, dont
+set it to be 10.44.44.1 or 10.43.43.1 as these are used by kubernetes by default and caused me two days of pain by using.
 6. Then go to DHCP->DHCP Settings and set:
  ![DHCP Settings](dhcp_settings.png)
 7. I then gave my raspberry pi's a fixed IP by first connecting them to the switch, getting their MAC address then going to DHCP->Address Reservation. I think its possible to set this via the config file at /etc/dhcpcd.conf but I am not sure how to set that before connecting to the network anyway.
@@ -45,41 +46,41 @@ pip install ansible
 I had to copy my ssh key to the raspberry pis, so make sure you have generated a SSH key on your machine, then run:
 
 ```
-ssh-copy-id tom.mclean@10.42.42.100
-ssh-copy-id tom.mclean@10.42.42.101
-ssh-copy-id tom.mclean@10.42.42.102
+ssh-copy-id tom.mclean@10.44.44.100
+ssh-copy-id tom.mclean@10.44.44.101
+ssh-copy-id tom.mclean@10.44.44.102
 ```
 
 Then you can ping the machines with ansible:
 ```
 (env) mclean@tommclean:~/src/raspberry-pi-kubernetes-cluster/ansible$ ansible k3s_cluster -m ping -i inventory.ini
-[WARNING]: Platform linux on host 10.42.42.101 is using the discovered Python interpreter
+[WARNING]: Platform linux on host 10.44.44.101 is using the discovered Python interpreter
 at /usr/bin/python3.12, but future installation of another Python interpreter could change
 the meaning of that path. See https://docs.ansible.com/ansible-
 core/2.18/reference_appendices/interpreter_discovery.html for more information.
-10.42.42.101 | SUCCESS => {
+10.44.44.101 | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3.12"
     },
     "changed": false,
     "ping": "pong"
 }
-[WARNING]: Platform linux on host 10.42.42.102 is using the discovered Python interpreter
+[WARNING]: Platform linux on host 10.44.44.102 is using the discovered Python interpreter
 at /usr/bin/python3.12, but future installation of another Python interpreter could change
 the meaning of that path. See https://docs.ansible.com/ansible-
 core/2.18/reference_appendices/interpreter_discovery.html for more information.
-10.42.42.102 | SUCCESS => {
+10.44.44.102 | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3.12"
     },
     "changed": false,
     "ping": "pong"
 }
-[WARNING]: Platform linux on host 10.42.42.100 is using the discovered Python interpreter
+[WARNING]: Platform linux on host 10.44.44.100 is using the discovered Python interpreter
 at /usr/bin/python3.12, but future installation of another Python interpreter could change
 the meaning of that path. See https://docs.ansible.com/ansible-
 core/2.18/reference_appendices/interpreter_discovery.html for more information.
-10.42.42.100 | SUCCESS => {
+10.44.44.100 | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3.12"
     },
@@ -109,14 +110,17 @@ sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
 Then make a copy of your server k3s config on the server machine:
 ```
-sudo cp /etc/rancher/k3s/k3s.yaml /home/tom.mclean/k3s.
-yaml
+ssh tom.mclean@10.44.44.100
+sudo cp /etc/rancher/k3s/k3s.yaml /home/tom.mclean/k3s.yaml
 sudo chown tom.mclean:tom.mclean k3s.yaml
 ```
 Then copy it to your machine:
 ```
-scp tom.mclean@10.42.42.100:/home/tom.mclean/k3s.yaml ~/k3s-config.yaml
+scp tom.mclean@10.44.44.100:/home/tom.mclean/k3s.yaml ~/k3s-config.yaml
 export KUBECONFIG=~/k3s-config.yaml
+```
+Then modify the address in the config to the master node's address `10.44.44.100`, then you can see the nodes:
+```
 mclean@tommclean:~$ kubectl get nodes
 NAME     STATUS   ROLES                  AGE   VERSION
 node-0   Ready    control-plane,master   14h   v1.31.3+k3s1

@@ -1,0 +1,19 @@
+cloudflare:
+  tunnelName: "grafana-tunnel"
+  tunnelId: "92d7c3ac-fb0c-4720-b43a-910e16f3692a"
+  secretName: "tunnel-credentials"
+  ingress:
+    - hostname: "grafana.mcleantom.com"
+      service: "http://grafana.monitoring.svc.cluster.local:3000"
+      originRequest:
+        noTLSVerify: true
+
+resources:
+  limits:
+    cpu: "100m"
+    memory: "128Mi"
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+
+replicaCount: 1
