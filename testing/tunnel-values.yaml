@@ -7,7 +7,18 @@ cloudflare:
       service: "http://grafana.monitoring.svc.cluster.local:3000"
       originRequest:
         noTLSVerify: true
-
+    - hostname: "argocd.mcleantom.com"
+      service: "https://argocd-server.argocd.svc.cluster.local:443"
+      originRequest:
+        noTLSVerify: true
+    - hostname: "overleaf.mcleantom.com"
+      service: "http://overleaf.overleaf.svc.cluster.local:80"
+      originRequest:
+        noTLSVerify: true
+    - hostname: "homepage.mcleantom.com"
+      service: "http://homepage.homepage.svc.cluster.local:3000"
+      originRequest:
+        noTLSVerify: true
 resources:
   limits:
     cpu: "100m"

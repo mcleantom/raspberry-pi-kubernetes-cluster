@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-ingress
+  namespace: argocd
+  annotations:
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    external-dns.alpha.kubernetes.io/hostname: argocd.mcleantom.com
+    external-dns.alpha.kubernetes.io/target: 92d7c3ac-fb0c-4720-b43a-910e16f3692a.cfargotunnel.com
+spec:
+  rules:
+  - host: argocd.mcleantom.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              number: 443
+

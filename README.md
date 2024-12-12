@@ -273,3 +273,6 @@ kubectl apply -f grafana-ingress.yaml
 After a short amount of time, you should be able to see the grafana dashboard from the internet!
 ![grafana dashboard](grafana-dashboard.png)
 I'm not sure why cpu usage is sometimes negative...
+
+## How to rebuild an x86 Docker image for ARM
+
